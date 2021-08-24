@@ -15,8 +15,8 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.util.Timeout
 import models.JsonTraits
 import models.MyTypes._
-import models.Posts.GetPosts
 import models.User.{GetUsers, User}
+import models.Posts.{Post, GetPosts}
 
 object MyRoutes extends SprayJsonSupport with JsonTraits {
   implicit val system: ActorSystem = ActorSystem("RouteSystem");
@@ -56,5 +56,16 @@ object MyRoutes extends SprayJsonSupport with JsonTraits {
               complete((userActorRef ? user).map(_ => StatusCodes.OK))
           }
         }
-    }
+    } ~ path("post") {
+        get {
+          val posts: Future[PostsList] = (postActorRef ? GetPosts).mapTo[PostsList]
+          complete(posts)
+        } ~
+          post {
+            entity(as[Post]) {
+              post =>
+                complete((postActorRef ? post).map(_ => StatusCodes.OK))
+            }
+          }
+      }
 }
