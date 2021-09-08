@@ -5,10 +5,13 @@ import MyRoutes.routes
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.{ExceptionHandler, MethodRejection, MissingQueryParamRejection, Rejection, RejectionHandler}
+import services.DbService.postsearch
 
 object HttpWrap extends App {
   implicit val system: ActorSystem = ActorSystem("Scalalike");
   implicit val materializer: ActorMaterializer = ActorMaterializer();
+
+  println(s"My sql ${postsearch.unsafeRunSync()}")
 
   // Handle rejections
   implicit val customRejectionHandler: RejectionHandler = RejectionHandler.newBuilder()

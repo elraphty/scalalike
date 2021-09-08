@@ -18,11 +18,13 @@ import models.MyTypes._
 import models.User.{GetUsers, User}
 import models.Posts.{Post, GetPosts}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object MyRoutes extends SprayJsonSupport with JsonTraits {
   implicit val system: ActorSystem = ActorSystem("RouteSystem");
   implicit val materializer: ActorMaterializer = ActorMaterializer();
 
-  import system.dispatcher;
+//  import system.dispatcher;
 
   implicit val timeout: Timeout = Timeout(10 seconds);
 
