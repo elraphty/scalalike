@@ -19,14 +19,14 @@ object DbService {
   val transactor: Resource[IO, HikariTransactor[IO]] =
   for {
     ce <- ExecutionContexts.fixedThreadPool[IO](32) // our connect EC
-    be <- Blocker[IO]    // our blocking EC
+    be <- Blocker[IO] // our blocking EC
     xa <- HikariTransactor.newHikariTransactor[IO](
-      "org.postgresql.Driver",     // driver classname
-      "jdbc:postgresql://localhost/postlike",     // connect URL (driver-specific)
-      "raph",                  // user
-      "raph",                          //                                     // password
-      ce,                                     // await connection here
-      be                                      // execute JDBC operations here
+      "org.postgresql.Driver", // driver classname
+      "jdbc:postgresql://localhost/postlike", // connect URL (driver-specific)
+      "raph", // user
+      "raph", //                                     // password
+      ce, // await connection here
+      be // execute JDBC operations here
     )
   } yield xa
 
@@ -37,4 +37,12 @@ object DbService {
     } yield (a)
   }
 
+  def insert1(userId: Int, wins: String, failures: String, commitments: String): IO[ExitCode] = {
+    transactor.use {
+      xa =>
+        for {
+          a <- sql"insert into posts (userid, wins, failures, commitments) values ($userId, $wins, $failures, $commitments)".update.run.transact(xa)
+        } yield ExitCode.Success
+    }
+  }
 }
