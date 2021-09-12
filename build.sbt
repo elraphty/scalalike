@@ -9,6 +9,7 @@ val akkaHttpVersion = "10.1.8"
 val scalaTestVersion = "3.2.8"
 val doobieVersion = "0.13.4"
 val postgresVersion = "42.2.22"
+val bcryptVersion = "4.3.0"
 
 libraryDependencies ++=Seq(
   // akka streams
@@ -31,5 +32,8 @@ libraryDependencies ++=Seq(
   "org.tpolecat" %% "doobie-postgres" % doobieVersion,
   "org.tpolecat" %% "doobie-specs2"   % doobieVersion,
 
-  "org.postgresql" % "postgresql" % postgresVersion
+  "org.postgresql" % "postgresql" % postgresVersion,
+
+  // password hashing
+  "com.github.t3hnar" %% "scala-bcrypt" % bcryptVersion
 )
