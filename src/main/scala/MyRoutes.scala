@@ -66,7 +66,7 @@ object MyRoutes extends SprayJsonSupport with JsonTraits {
           post {
             entity(as[Post]) {
               post =>
-                complete((postActorRef ? post).map(_ => StatusCodes.OK))
+                complete((postActorRef ? post).map(x => if(x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
             }
           }
       }

@@ -1,14 +1,9 @@
 package services
 
-import cats._
-import cats.data._
 import cats.effect._
-import cats.implicits._
-import doobie._
 import doobie.implicits._
 import doobie.util.ExecutionContexts
 import doobie.hikari.HikariTransactor
-import models.MyTypes.PostsList
 import models.Posts.Posts
 
 object DbService {
@@ -29,20 +24,4 @@ object DbService {
       be // execute JDBC operations here
     )
   } yield xa
-
-  val postsearch = transactor.use { xa =>
-    // Construct and run your server here!
-    for {
-      a <- sql"select * from posts".query[Posts].to[List].transact(xa)
-    } yield (a)
-  }
-
-  def insert1(userId: Int, wins: String, failures: String, commitments: String): IO[ExitCode] = {
-    transactor.use {
-      xa =>
-        for {
-          a <- sql"insert into posts (userid, wins, failures, commitments) values ($userId, $wins, $failures, $commitments)".update.run.transact(xa)
-        } yield ExitCode.Success
-    }
-  }
 }
