@@ -1,7 +1,7 @@
 package models
 
 object User {
-  case class User(fullName: String, age: Int, email: String, password: String, image: String)
-  case class Users(id: Int, fullName: String, age: Int, email: String, password: String, image: String)
+  case class User(fullName: String, age: Int, email: String, password: String, image: Option[String])
+  case class Users(id: Int, age: Int, email: String, password: String, fullName: String, image: Option[String])
   case object GetUsers
 }
