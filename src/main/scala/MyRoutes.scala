@@ -1,7 +1,6 @@
 import actors.PostActor.MyPostActor
 import actors.UserActor.MyUserActor
 import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, Multipart, StatusCodes}
 import akka.http.scaladsl.server.Route
@@ -15,8 +14,9 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.util.Timeout
 import models.JsonTraits
 import models.MyTypes._
-import models.User.{GetUsers, User}
-import models.Posts.{Post, GetPosts}
+import models.User.{GetSingleUser, GetUsers, User}
+import models.Posts.{GetPosts, GetSinglePost, GetUserPosts, Post}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -24,14 +24,14 @@ object MyRoutes extends SprayJsonSupport with JsonTraits {
   implicit val system: ActorSystem = ActorSystem("RouteSystem");
   implicit val materializer: ActorMaterializer = ActorMaterializer();
 
-//  import system.dispatcher;
+  //  import system.dispatcher;
 
   implicit val timeout: Timeout = Timeout(10 seconds);
 
   val userActorRef: ActorRef = system.actorOf(Props[MyUserActor], "userActor")
   val postActorRef: ActorRef = system.actorOf(Props[MyPostActor], "postActor")
 
-  val routes: Route =
+  val routes: Route = cors() {
     path("") {
       get {
         complete(
@@ -55,19 +55,39 @@ object MyRoutes extends SprayJsonSupport with JsonTraits {
         post {
           entity(as[User]) {
             user =>
-              complete((userActorRef ? user).map(x => if(x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
+              complete((userActorRef ? user).map(x => if (x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
           }
         }
-    } ~ path("post") {
+    } ~ path("user" / IntNumber) {
+      userId => {
         get {
-          val posts: Future[PostsList] = (postActorRef ? GetPosts).mapTo[PostsList]
-          complete(posts)
-        } ~
-          post {
-            entity(as[Post]) {
-              post =>
-                complete((postActorRef ? post).map(x => if(x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
-            }
-          }
+          val user: Future[UsersList] = (userActorRef ? GetSingleUser(userId)).mapTo[UsersList]
+          complete(user)
+        }
       }
+    } ~ path("post") {
+      get {
+        val posts: Future[PostsList] = (postActorRef ? GetPosts).mapTo[PostsList]
+        complete(posts)
+      } ~
+        post {
+          entity(as[Post]) {
+            post =>
+              complete((postActorRef ? post).map(x => if (x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
+          }
+        }
+    } ~ path("post" / IntNumber) {
+      id => {
+        get {
+          val post: Future[PostsList] = (postActorRef ? GetSinglePost(id)).mapTo[PostsList]
+          complete(post)
+        }
+      }
+    } ~ (path("post" / "user" / IntNumber) & get) {
+      userId => {
+        val posts: Future[PostsList] = (postActorRef ? GetUserPosts(userId)).mapTo[PostsList]
+        complete(posts)
+      }
+    }
+  }
 }

@@ -1,8 +1,9 @@
 package actors
 
 import akka.actor.Actor
-import models.Posts.{GetPosts, Post}
-import services.DbQueries.{getAllPosts, insertPost}
+import models.Posts.{GetPosts, GetSinglePost, GetUserPosts, Post}
+import services.DbQueries.{getAllPosts, getSInglePost, getUserPosts, insertPost}
+
 import scala.language.postfixOps
 
 object PostActor {
@@ -18,6 +19,12 @@ object PostActor {
       case GetPosts =>
         val newPosts = getAllPosts.unsafeRunSync()
         sender() ! newPosts;
+      case GetSinglePost(postId) =>
+        val post = getSInglePost(postId).unsafeRunSync()
+        sender() ! post
+      case GetUserPosts(userId) =>
+        val posts = getUserPosts(userId).unsafeRunSync()
+        sender() ! posts
     }
   }
 }

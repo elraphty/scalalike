@@ -24,6 +24,18 @@ object DbQueries {
     } yield (a)
   }
 
+  def getSInglePost(id: Int): IO[List[Posts]] = transactor.use { xa =>
+    for {
+      a <- sql"select * from posts where id = $id".query[Posts].to[List].transact(xa)
+    } yield (a)
+  }
+
+  def getUserPosts(userId: Int): IO[List[Posts]] = transactor.use { xa =>
+    for {
+      a <- sql"select * from posts where userid = $userId".query[Posts].to[List].transact(xa)
+    } yield (a)
+  }
+
   // User Db Functions
   def insertUser(fullName: String, email: String, age: Int, password: String): IO[ExitCode] = {
     val hashPass = password.bcryptSafeBounded.get
@@ -37,7 +49,13 @@ object DbQueries {
 
   val getAllUsers: IO[List[Users]] = transactor.use { xa =>
     for {
-      a <- sql"select * from users order by id desc".query[Users].to[List].transact(xa)
+      a <- sql"select id, age, email, fullname, image from users order by id desc".query[Users].to[List].transact(xa)
+    } yield (a)
+  }
+
+  def getSIngleUser(userId: Int): IO[List[Users]] = transactor.use { xa =>
+    for {
+      a <- sql"select id, age, email, fullname, image from users where id = $userId".query[Users].to[List].transact(xa)
     } yield (a)
   }
 }

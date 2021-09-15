@@ -5,7 +5,6 @@ import MyRoutes.routes
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.{ExceptionHandler, MethodRejection, MissingQueryParamRejection, Rejection, RejectionHandler}
-import services.DbQueries.{insertPost, getAllPosts}
 
 object HttpWrap extends App {
   implicit val system: ActorSystem = ActorSystem("ScalaLike");

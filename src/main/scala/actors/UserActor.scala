@@ -2,7 +2,7 @@ package actors
 
 import akka.actor.Actor
 import models.User._
-import services.DbQueries.{getAllUsers, insertUser}
+import services.DbQueries.{getAllUsers, getSIngleUser, insertUser}
 
 object UserActor {
    class MyUserActor extends Actor {
@@ -17,6 +17,9 @@ object UserActor {
        case GetUsers =>
          val newUsers = getAllUsers.unsafeRunSync()
          sender() ! newUsers
+       case GetSingleUser(userId) =>
+         val user = getSIngleUser(userId).unsafeRunSync()
+         sender() ! user;
      }
    }
 }
