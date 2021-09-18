@@ -36,7 +36,13 @@ libraryDependencies ++=Seq(
 
   // password hashing
   "com.github.t3hnar" %% "scala-bcrypt" % bcryptVersion,
+  "org.mindrot" % "jbcrypt" % "0.3m",
 
   // Cors
-  "ch.megard" %% "akka-http-cors" % "1.1.2"
+  "ch.megard" %% "akka-http-cors" % "1.1.2",
+
+// JWT
+  "com.github.jwt-scala" %% "jwt-core" % "9.0.1",
+  "com.softwaremill.akka-http-session" %% "core" % "0.6.1",
+  "com.softwaremill.akka-http-session" %% "jwt"  % "0.6.1"
 )

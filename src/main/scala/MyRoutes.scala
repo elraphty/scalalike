@@ -14,9 +14,11 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.util.Timeout
 import models.JsonTraits
 import models.MyTypes._
-import models.User.{GetSingleUser, GetUsers, User}
+import models.User.{GetSingleUser, GetUsers, Login, LoginUser, User, Users}
 import models.Posts.{GetPosts, GetSinglePost, GetUserPosts, Post}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import spray.json._
+import org.mindrot.jbcrypt._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -58,35 +60,48 @@ object MyRoutes extends SprayJsonSupport with JsonTraits {
               complete((userActorRef ? user).map(x => if (x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
           }
         }
-    } ~ path("user" / IntNumber) {
-      userId => {
-        get {
-          val user: Future[UsersList] = (userActorRef ? GetSingleUser(userId)).mapTo[UsersList]
-          complete(user)
-        }
+    } ~ path("auth" / "login") {
+      post {
+        entity(as[Login]) {
+          loginData => {
+            val user: Future[Vector[Login]] = (userActorRef ? loginData).mapTo[Vector[Login]]
+            complete(user);
+          }
       }
-    } ~ path("post") {
-      get {
-        val posts: Future[PostsList] = (postActorRef ? GetPosts).mapTo[PostsList]
-        complete(posts)
-      } ~
-        post {
-          entity(as[Post]) {
-            post =>
-              complete((postActorRef ? post).map(x => if (x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
+    } ~ path("user" / IntNumber) {
+        userId => {
+          get {
+            val user: Future[UsersList] = (userActorRef ? GetSingleUser(userId)).mapTo[UsersList]
+            val user1: User = User("Raphael", 25, "elraphty", "hhh", Some("hello"));
+            val user2: UsersList = List(Users(1, 25, "Raphael", "elraphty", Some("hello")))
+            println(user2.toJson.prettyPrint)
+            println(user1.toJson.prettyPrint)
+            complete(user)
           }
         }
-    } ~ path("post" / IntNumber) {
-      id => {
+      } ~ path("post") {
         get {
-          val post: Future[PostsList] = (postActorRef ? GetSinglePost(id)).mapTo[PostsList]
-          complete(post)
+          val posts: Future[PostsList] = (postActorRef ? GetPosts).mapTo[PostsList]
+          complete(posts)
+        } ~
+          post {
+            entity(as[Post]) {
+              post =>
+                complete((postActorRef ? post).map(x => if (x == "Success") StatusCodes.OK else StatusCodes.BadRequest))
+            }
+          }
+      } ~ path("post" / IntNumber) {
+        id => {
+          get {
+            val post: Future[PostsList] = (postActorRef ? GetSinglePost(id)).mapTo[PostsList]
+            complete(post)
+          }
         }
-      }
-    } ~ (path("post" / "user" / IntNumber) & get) {
-      userId => {
-        val posts: Future[PostsList] = (postActorRef ? GetUserPosts(userId)).mapTo[PostsList]
-        complete(posts)
+      } ~ (path("post" / "user" / IntNumber) & get) {
+        userId => {
+          val posts: Future[PostsList] = (postActorRef ? GetUserPosts(userId)).mapTo[PostsList]
+          complete(posts)
+        }
       }
     }
   }

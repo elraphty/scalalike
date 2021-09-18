@@ -4,8 +4,8 @@ import DbService.transactor
 import cats.effect.{ExitCode, IO}
 import doobie.implicits._
 import models.Posts.Posts
-import com.github.t3hnar.bcrypt._
-import models.User.Users
+import models.User.{Login, LoginUser, Users}
+import org.mindrot.jbcrypt._
 
 object DbQueries {
   // Posts db functions
@@ -38,7 +38,7 @@ object DbQueries {
 
   // User Db Functions
   def insertUser(fullName: String, email: String, age: Int, password: String): IO[ExitCode] = {
-    val hashPass = password.bcryptSafeBounded.get
+    val hashPass = BCrypt.hashpw(password, BCrypt.gensalt())
     transactor.use {
       xa =>
         for {
@@ -57,5 +57,14 @@ object DbQueries {
     for {
       a <- sql"select id, age, email, fullname, image from users where id = $userId".query[Users].to[List].transact(xa)
     } yield (a)
+  }
+
+  def loginUser(email: String): IO[Vector[Login]] = {
+    transactor.use {
+      xa =>
+        for {
+          a <- sql"select email, password from users where email = $email".query[Login].to[Vector].transact(xa)
+        } yield a
+    }
   }
 }

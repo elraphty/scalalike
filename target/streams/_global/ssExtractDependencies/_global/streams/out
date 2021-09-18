@@ -1,8 +1,8 @@
-[error] sbt.librarymanagement.ResolveException: Error downloading ch.megard:akka-http-cors_2.13:0.4.0
+[error] sbt.librarymanagement.ResolveException: Error downloading io.mattmoore:bcrypt-scala_2.13:0.1.0
 [error]   Not found
 [error]   Not found
-[error]   not found: /Users/apple/.ivy2/localch.megard/akka-http-cors_2.13/0.4.0/ivys/ivy.xml
-[error]   not found: https://repo1.maven.org/maven2/ch/megard/akka-http-cors_2.13/0.4.0/akka-http-cors_2.13-0.4.0.pom
+[error]   not found: /Users/apple/.ivy2/localio.mattmoore/bcrypt-scala_2.13/0.1.0/ivys/ivy.xml
+[error]   not found: https://repo1.maven.org/maven2/io/mattmoore/bcrypt-scala_2.13/0.1.0/bcrypt-scala_2.13-0.1.0.pom
 [error] 	at lmcoursier.CoursierDependencyResolution.unresolvedWarningOrThrow(CoursierDependencyResolution.scala:258)
 [error] 	at lmcoursier.CoursierDependencyResolution.$anonfun$update$38(CoursierDependencyResolution.scala:227)
 [error] 	at scala.util.Either$LeftProjection.map(Either.scala:573)
@@ -33,8 +33,8 @@
 [error] 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
 [error] 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 [error] 	at java.lang.Thread.run(Thread.java:748)
-[error] (ssExtractDependencies) sbt.librarymanagement.ResolveException: Error downloading ch.megard:akka-http-cors_2.13:0.4.0
+[error] (ssExtractDependencies) sbt.librarymanagement.ResolveException: Error downloading io.mattmoore:bcrypt-scala_2.13:0.1.0
 [error]   Not found
 [error]   Not found
-[error]   not found: /Users/apple/.ivy2/localch.megard/akka-http-cors_2.13/0.4.0/ivys/ivy.xml
-[error]   not found: https://repo1.maven.org/maven2/ch/megard/akka-http-cors_2.13/0.4.0/akka-http-cors_2.13-0.4.0.pom
+[error]   not found: /Users/apple/.ivy2/localio.mattmoore/bcrypt-scala_2.13/0.1.0/ivys/ivy.xml
+[error]   not found: https://repo1.maven.org/maven2/io/mattmoore/bcrypt-scala_2.13/0.1.0/bcrypt-scala_2.13-0.1.0.pom
